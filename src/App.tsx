@@ -256,7 +256,7 @@ function EmployeeBoard() {
 
       <div className="metric-grid">
         <Metric value="201" label="今日交手机人数" icon={<Smartphone size={18} />} />
-        <Metric value="33" label="请假及出差人数" icon={<CalendarClock size={18} />} />
+        <Metric value="33" label="出差人数" icon={<CalendarClock size={18} />} />
         <Metric value="173" label="实际到岗人数" icon={<MonitorCheck size={18} />} />
       </div>
 
@@ -265,7 +265,7 @@ function EmployeeBoard() {
           <ShieldAlert size={20} />
         </span>
         <span>
-          <strong>请假人员工位出现</strong>
+          <strong>出差人员工位出现</strong>
           <small>员工：林泽宇 · 10:42 被 3F 摄像头识别</small>
         </span>
         <ChevronRight size={18} />
@@ -305,14 +305,14 @@ function EmployeeBoard() {
           />
         ) : null}
         <StatusRow
-          label="请假在岗交叉比对"
+          label="出差在岗交叉比对"
           value="1 人命中"
           danger
           expanded={openDetail === "leave"}
           onClick={() => setOpenDetail(openDetail === "leave" ? null : "leave")}
         />
         {openDetail === "leave" ? (
-          <DetailList items={["林泽宇 · 全天事假 · 10:42 识别在 3F 东区本人办公工位"]} />
+          <DetailList items={["林泽宇 · 全天出差 · 10:42 识别在 3F 东区本人办公工位"]} />
         ) : null}
       </div>
     </section>
@@ -696,8 +696,8 @@ function EmployeeAlertDetail() {
         </button>
         <div>
           <p className="eyebrow">Employee Alert</p>
-          <h1>请假人员工位出现预警</h1>
-          <p>员工林泽宇已提交全天事假流程，但 10:42 被 3F 东区摄像头识别出现在本人办公工位。</p>
+          <h1>出差人员工位出现预警</h1>
+          <p>员工林泽宇已提交全天出差流程，但 10:42 被 3F 东区摄像头识别出现在本人办公工位。</p>
         </div>
       </header>
 
@@ -715,12 +715,12 @@ function EmployeeAlertDetail() {
             <CircleAlert size={28} />
             <div>
               <strong>异常匹配度 96%</strong>
-              <small>人脸识别、工位轨迹、请假流程三源交叉命中</small>
+              <small>人脸识别、工位轨迹、出差流程三源交叉命中</small>
             </div>
           </div>
 
           <div className="timeline">
-            <TimelineItem icon={<FolderUp size={17} />} title="09:08" text="员工提交全天事假申请" />
+            <TimelineItem icon={<FolderUp size={17} />} title="09:08" text="员工提交全天出差申请" />
             <TimelineItem icon={<ClipboardCheck size={17} />} title="09:21" text="直属经理审批通过" />
             <TimelineItem icon={<Radio size={17} />} title="10:42" text="3F 东区摄像头识别到本人在岗" danger />
             <TimelineItem icon={<Send size={17} />} title="10:45" text="系统自动推送复核待办至合规稽核部" />
