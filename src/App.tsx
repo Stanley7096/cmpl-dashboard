@@ -9,6 +9,7 @@ import {
   CircleAlert,
   ClipboardCheck,
   FileCheck2,
+  FileSearch,
   FolderUp,
   MailCheck,
   MessageSquareText,
@@ -20,7 +21,9 @@ import {
   ShieldAlert,
   ShieldCheck,
   Smartphone,
+  TrendingDown,
   UploadCloud,
+  UserCheck,
   UsersRound,
 } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -223,6 +226,58 @@ const pointToPointItems = [
   { target: "战略发展部", action: "公司章程调整建议", time: "落实时间 2026-07-18" },
 ];
 
+const investmentAuditRules = [
+  {
+    id: "family-completeness",
+    rule: "规则1",
+    title: "亲属信息完整性稽核",
+    severity: "预警",
+    icon: <UsersRound size={17} />,
+    summary: "仅申报本人、有子女无配偶等疑似漏报情形",
+    details: [
+      "合规稽核部 · 陈思远 · 仅申报本人一条记录 · 疑似漏报",
+      "运营部 · 赵敏 · 有子女无配偶 · 可能漏报，需核实",
+    ],
+  },
+  {
+    id: "family-quarter-change",
+    rule: "规则2",
+    title: "亲属数量环比变动稽核",
+    severity: "预警",
+    icon: <TrendingDown size={17} />,
+    summary: "本季度亲属数小于上季度亲属数",
+    details: [
+      "交易部 · 王珩 · 上季度 4 人，本季度 2 人",
+      "合规稽核部 · 刘悦 · 上季度 3 人，本季度 1 人",
+      "运营部 · 周明 · 上季度 2 人，本季度 1 人",
+    ],
+  },
+  {
+    id: "top-holding-related",
+    rule: "规则3",
+    title: "前十大持仓关联稽核",
+    severity: "中风险",
+    icon: <FileSearch size={17} />,
+    summary: "员工或亲属申报持仓命中公司前十大持仓股票",
+    details: [
+      "合规稽核部 · 许晨 · 亲属持仓命中 美的集团 000333",
+    ],
+  },
+  {
+    id: "overdue-filing",
+    rule: "规则4",
+    title: "超期报备稽核",
+    severity: "低风险",
+    icon: <CalendarClock size={17} />,
+    summary: "提交申报日期超过截止日期，截止日前自动提示员工",
+    details: [
+      "渠道业务部 · 黄一鸣 · 截止 2026-07-04，提交 2026-07-06",
+      "运营部 · 吴越 · 截止 2026-07-04，提交 2026-07-07",
+      "合规稽核部 · 林晓 · 截止前 2 天已自动提醒",
+    ],
+  },
+];
+
 function App() {
   const [route, setRoute] = useState(() => window.location.hash || "#/");
 
@@ -249,72 +304,116 @@ function Dashboard() {
 
 function EmployeeBoard() {
   const [openDetail, setOpenDetail] = useState<"actions" | "leave" | null>(null);
+  const [openInvestmentRule, setOpenInvestmentRule] = useState(investmentAuditRules[0].id);
 
   return (
     <section className="board board-employee">
       <BoardHeader icon={<UsersRound size={22} />} label="员工管理看板" status="实时监控" tone="red" />
 
-      <div className="metric-grid">
-        <Metric value="201" label="今日交手机人数" icon={<Smartphone size={18} />} />
-        <Metric value="33" label="出差人数" icon={<CalendarClock size={18} />} />
-        <Metric value="173" label="实际到岗人数" icon={<MonitorCheck size={18} />} />
-      </div>
-
-      <button className="alert-strip" onClick={() => (window.location.hash = "#/employee-alert")}>
-        <span className="alert-icon">
-          <ShieldAlert size={20} />
-        </span>
-        <span>
-          <strong>出差人员工位出现</strong>
-          <small>员工：林泽宇 · 10:42 被 3F 摄像头识别</small>
-        </span>
-        <ChevronRight size={18} />
-      </button>
-
-      <div className="camera-card">
-        <div className="card-heading">
-          <span>AI 行为识别截图</span>
-          <span className="risk-pill">疑似玩手机 92%</span>
+      <section className="employee-section daily-supervision">
+        <div className="employee-section-title">
+          <span>日常监督检查</span>
+          <em>行为识别 · 考勤交叉核验</em>
         </div>
-        <div className="camera-frame">
-          <img src={asset("1.jpg")} alt="AI 监控疑似玩手机截图" />
-          <div className="phone-box">
-            <span>手部动作</span>
+
+        <div className="metric-grid employee-metric-grid">
+          <Metric value="201" label="今日交手机人数" icon={<Smartphone size={18} />} />
+          <Metric value="33" label="出差人数" icon={<CalendarClock size={18} />} />
+          <Metric value="18" label="请假人数" icon={<UserCheck size={18} />} />
+          <Metric value="173" label="实际到岗人数" icon={<MonitorCheck size={18} />} />
+        </div>
+
+        <button className="alert-strip" onClick={() => (window.location.hash = "#/employee-alert")}>
+          <span className="alert-icon">
+            <ShieldAlert size={20} />
+          </span>
+          <span>
+            <strong>出差人员工位出现</strong>
+            <small>员工：林泽宇 · 10:42 被 3F 摄像头识别</small>
+          </span>
+          <ChevronRight size={18} />
+        </button>
+
+        <div className="camera-card">
+          <div className="card-heading">
+            <span>AI 行为识别截图</span>
+            <span className="risk-pill">疑似玩手机 92%</span>
           </div>
-          <div className="scan-line" />
+          <div className="camera-frame">
+            <img src={asset("1.jpg")} alt="AI 监控疑似玩手机截图" />
+            <div className="phone-box">
+              <span>手部动作</span>
+            </div>
+            <div className="scan-line" />
+          </div>
         </div>
-      </div>
 
-      <div className="compact-list">
-        <StatusRow label="摄像头覆盖工位" value="96.8%" />
-        <StatusRow
-          label="异常动作复核队列"
-          value="4 条"
-          danger
-          expanded={openDetail === "actions"}
-          onClick={() => setOpenDetail(openDetail === "actions" ? null : "actions")}
-        />
-        {openDetail === "actions" ? (
-          <DetailList
-            items={[
-              "15:36 3F 东区工位疑似玩手机，待合规稽核部复核",
-              "14:12 2F 会议区长时间离席，待主管确认",
-              "11:05 5F 工位遮挡摄像头，已推送现场核验",
-              "09:48 4F 茶水间聚集超时，待行政复核",
-            ]}
+        <div className="compact-list">
+          <StatusRow label="摄像头覆盖工位" value="96.8%" />
+          <StatusRow
+            label="异常动作复核队列"
+            value="4 条"
+            danger
+            expanded={openDetail === "actions"}
+            onClick={() => setOpenDetail(openDetail === "actions" ? null : "actions")}
           />
-        ) : null}
-        <StatusRow
-          label="出差在岗交叉比对"
-          value="1 人命中"
-          danger
-          expanded={openDetail === "leave"}
-          onClick={() => setOpenDetail(openDetail === "leave" ? null : "leave")}
-        />
-        {openDetail === "leave" ? (
-          <DetailList items={["林泽宇 · 全天出差 · 10:42 识别在 3F 东区本人办公工位"]} />
-        ) : null}
-      </div>
+          {openDetail === "actions" ? (
+            <DetailList
+              items={[
+                "15:36 3F 东区工位疑似玩手机，待合规稽核部复核",
+                "14:12 2F 会议区长时间离席，待主管确认",
+                "11:05 5F 工位遮挡摄像头，已推送现场核验",
+                "09:48 4F 茶水间聚集超时，待行政复核",
+              ]}
+            />
+          ) : null}
+          <StatusRow
+            label="出差在岗交叉比对"
+            value="1 人命中"
+            danger
+            expanded={openDetail === "leave"}
+            onClick={() => setOpenDetail(openDetail === "leave" ? null : "leave")}
+          />
+          {openDetail === "leave" ? (
+            <DetailList items={["林泽宇 · 全天出差 · 10:42 识别在 3F 东区本人办公工位"]} />
+          ) : null}
+        </div>
+      </section>
+
+      <section className="employee-section investment-section">
+        <div className="employee-section-title">
+          <span>投资申报管理</span>
+          <em>亲属申报 · 持仓关联 · 超期报备</em>
+        </div>
+
+        <div className="investment-rule-list">
+          {investmentAuditRules.map((item) => {
+            const active = openInvestmentRule === item.id;
+            return (
+              <article key={item.id} className={active ? "investment-rule active" : "investment-rule"}>
+                <button
+                  type="button"
+                  onClick={() => setOpenInvestmentRule(active ? "" : item.id)}
+                  aria-expanded={active}
+                >
+                  <span className="investment-rule-icon">{item.icon}</span>
+                  <span className="investment-rule-copy">
+                    <small>{item.rule} · {item.severity}</small>
+                    <strong>{item.title}</strong>
+                    <em>{item.summary}</em>
+                  </span>
+                  <span className="hit-count">
+                    <strong>{item.details.length}</strong>
+                    <small>命中人数</small>
+                  </span>
+                  {active ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+                </button>
+                {active ? <DetailList items={item.details} /> : null}
+              </article>
+            );
+          })}
+        </div>
+      </section>
     </section>
   );
 }
@@ -547,17 +646,6 @@ function PolicyBoard() {
     <section className="board board-policy">
       <BoardHeader icon={<ShieldCheck size={22} />} label="制度法规管理看板" status="新规解读与触达到人" tone="green" />
 
-      <div className="policy-docs">
-        <a href={asset("基金管理公司绩效考核管理指引.pdf")} target="_blank" rel="noreferrer">
-          <FileCheck2 size={20} />
-          <span>制度原文</span>
-        </a>
-        <a href={asset("基金管理公司绩效考核管理指引核心要点解读.pdf")} target="_blank" rel="noreferrer">
-          <MessageSquareText size={20} />
-          <span>核心要点解读</span>
-        </a>
-      </div>
-
       <NewRuleExpress />
       <PolicyDelivery />
     </section>
@@ -567,9 +655,16 @@ function PolicyBoard() {
 function NewRuleExpress() {
   return (
     <section className="policy-output-block rule-express-card">
+      <div className="policy-mode-tabs" aria-label="制度法规功能切换">
+        {["新规速递", "外规内化", "制度找人", "合规智库"].map((item, index) => (
+          <button key={item} className={index === 0 ? "active" : ""} type="button">
+            {item}
+          </button>
+        ))}
+      </div>
       <div className="policy-panel-head">
         <div>
-          <h3>新规速达</h3>
+          <h3>新规速递</h3>
           <p>收文后自动拆解条款、识别风险并提示需修订制度。</p>
         </div>
         <span>处理中</span>
@@ -597,6 +692,17 @@ function NewRuleExpress() {
         <span>本次收文</span>
         <strong>《基金管理公司绩效考核管理指引》</strong>
         <em>已解析 42 条条款</em>
+      </div>
+
+      <div className="policy-docs rule-docs">
+        <a href={asset("基金管理公司绩效考核管理指引.pdf")} target="_blank" rel="noreferrer">
+          <FileCheck2 size={20} />
+          <span>制度原文</span>
+        </a>
+        <a href={asset("基金管理公司绩效考核管理指引核心要点解读.pdf")} target="_blank" rel="noreferrer">
+          <MessageSquareText size={20} />
+          <span>核心要点解读</span>
+        </a>
       </div>
     </section>
   );
@@ -669,18 +775,42 @@ function PolicyDelivery() {
         <article>
           <strong>机构业务部</strong>
           <span>36 人 · 31 已读</span>
-          <p>张明超 7 天未阅读，已生成二次提醒待办。</p>
+          <div className="target-progress" aria-label="机构业务部已读进度 86%">
+            <i style={{ width: "86%" }} />
+          </div>
         </article>
         <article>
           <strong>渠道业务部</strong>
           <span>42 人 · 37 已读</span>
-          <p>王珂超 7 天未阅读，待部门负责人确认。</p>
+          <div className="target-progress" aria-label="渠道业务部已读进度 88%">
+            <i style={{ width: "88%" }} />
+          </div>
         </article>
         <article>
           <strong>合规稽核部</strong>
           <span>18 人 · 全部已读</span>
-          <p>可查看提示覆盖台账和处理反馈。</p>
+          <div className="target-progress complete" aria-label="合规稽核部已读进度 100%">
+            <i style={{ width: "100%" }} />
+          </div>
         </article>
+        <article>
+          <strong>运营部</strong>
+          <span>27 人 · 24 已读</span>
+          <div className="target-progress" aria-label="运营部已读进度 89%">
+            <i style={{ width: "89%" }} />
+          </div>
+        </article>
+        <article>
+          <strong>交易部</strong>
+          <span>19 人 · 16 已读</span>
+          <div className="target-progress" aria-label="交易部已读进度 84%">
+            <i style={{ width: "84%" }} />
+          </div>
+        </article>
+        <button className="todo-reminder-action" type="button">
+          <BellRing size={15} />
+          一键生成代办提醒
+        </button>
       </div>
     </section>
   );
